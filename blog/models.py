@@ -16,7 +16,7 @@ class Post(models.Model):
 
     # data fields
     title = models.CharField(max_length=250)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     slug = models.SlugField(max_length=250)
     # date
     publish = models.DateTimeField(default=timezone.now)
