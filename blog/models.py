@@ -2,6 +2,11 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
+#Managers
+class PublishedManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=Post.Status.PUBLISHED)
+
 # Create your models here.
 class Post(models.Model):
     class Status(models.TextChoices):   # for status field
@@ -26,6 +31,9 @@ class Post(models.Model):
     status = models.CharField(max_length=2, choices=Status.choices, default=Status.DRAFT)
         # max_length=2 -> 2 charactor
         # choices -> inherit from parent class
+
+    objects = models.Manager()  # Default Manager
+    published = PublishedManager()    # Custom Manager
 
     class Meta:
         ordering = ['-publish'] # sort by new posts
