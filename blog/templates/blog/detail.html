@@ -3,11 +3,22 @@
 {% load jformat %}  {# Django jalali #}
 
 {% block content %}
-    <h1>post detail</h1>
-
-    <h2>{{ post.title }} by ({{ post.author }})</h2>
-    <p>{{ post.description | linebreaks }}</p>
-    <hr>
-    <p>{{ post.publish | jformat:"%Y/%M/%d - %H:%I"}}</p>
-
+    <ul>
+    <li class="card" style="--color:#ececec; --bg-color:#E98B43">
+    <div class="icon"><i class="fa-solid fa-house"></i></div>
+        <div class="title">post detail</div>>
+    </li>
+    <li class="card" style="--color:#ececec; --bg-color:#E98B43">
+        <div class="icon"><i class="fa-solid fa-house"></i></div>
+        <div class="title">{{ post.title }} by ({{ post.author }})</div>>
+    </li>
+    <li class="card" style="--color:#ececec; --bg-color:#032437">
+        <div class="icon"><i class="fa-solid fa-circle-star"></i></div>
+        <div class="title">{{ post.description | linebreaks }}</div>>
+    </li>
+    <li class="card" style="--color:#ececec; --bg-color:#022F46">
+        <div class="icon"><i class="fa-solid fa-chart-column"></i></i></div>
+    <div class="title">{{ post.publish | jformat:"%Y/%M/%d - %H:%I"}}</div>
+    </li>
+    </ul>
 {% endblock %}
