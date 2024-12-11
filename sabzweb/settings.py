@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # my app
-    'blog.apps.BlogConfig'
+    'blog.apps.BlogConfig',
+    # To change the date and For Persianization
+    'django_jalali',
 ]
 
 MIDDLEWARE = [
@@ -106,9 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-us' # 'fa-ir' -> For Persianization
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'   # 'Asia/Tehran' -> For Persianization
 
 USE_I18N = True
 
