@@ -1,0 +1,15 @@
+{% extends 'parent/base.html' %}
+{% block title %}ticket form{% endblock %}
+
+
+{#  {{ posts.count }} number of posts #}
+{%  block content %}
+
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="ثبت">
+
+
+    </form>
+{% endblock %}

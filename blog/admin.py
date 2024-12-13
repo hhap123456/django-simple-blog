@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post
+from .models import Post, Ticket
 from django_jalali.admin.filters import JDateFieldListFilter
 import django_jalali.admin as jadmin
 
@@ -30,3 +30,9 @@ class PostAdmin(admin.ModelAdmin):
         return obj.description[:10] + '...' if len(obj.description) > 10 else obj.description
 
     empty_value_display = '--empty--'     # show this if field is empty
+
+
+@admin.register(Ticket)
+class TicketAdmin(admin.ModelAdmin):
+    list_display = ('name', 'subject', 'phone',)
+
