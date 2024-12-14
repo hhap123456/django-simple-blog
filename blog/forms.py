@@ -16,3 +16,10 @@ class TicketForm(forms.Form):
     subject = forms.ChoiceField(choices=SUBJECT_CHOICES)
 
 
+    def clean_phone(self):
+        phone = self.cleaned_data['phone']
+        if phone:
+            if not phone.isnumeric() :
+                raise forms.ValidationError("شماره تلفن عددی نیست")
+            else:
+                return phone
