@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Ticket
+from .models import Post, Ticket, Comment
 from django_jalali.admin.filters import JDateFieldListFilter
 import django_jalali.admin as jadmin
 
@@ -36,3 +36,9 @@ class PostAdmin(admin.ModelAdmin):
 class TicketAdmin(admin.ModelAdmin):
     list_display = ('name', 'subject', 'phone',)
 
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ("name", "created", "post", "active",)
+    list_filter = ('active', ('created', JDateFieldListFilter), ('updated', JDateFieldListFilter),)
+    search_fields = ('name', 'body',)
+    list_editable = ('active',)

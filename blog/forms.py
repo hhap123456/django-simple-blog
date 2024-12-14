@@ -1,5 +1,5 @@
 from random import choices
-
+from .models import Comment
 from django import forms
 
 class TicketForm(forms.Form):
@@ -19,7 +19,14 @@ class TicketForm(forms.Form):
     def clean_phone(self):
         phone = self.cleaned_data['phone']
         if phone:
-            if not phone.isnumeric() :
+            if not phone.isnumeric():
                 raise forms.ValidationError("شماره تلفن عددی نیست")
+            elif len(phone) != 11:
+                raise forms.ValidationError("شماره تلفن باید 11 رقم باشد")
             else:
                 return phone
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('name', 'body')

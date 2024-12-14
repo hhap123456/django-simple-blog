@@ -2,11 +2,11 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 
-from .forms import TicketForm
+from .forms import TicketForm, CommentForm
 from .models import Post, Ticket
 from django.core import paginator
 from django.views.generic import ListView, DetailView
-
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 def index(request):
@@ -36,19 +36,19 @@ class PostListView(ListView):
     paginate_by = 3 # limit to 3 in a page
     template_name = 'blog/list.html'
 
-# def post_detail(request, pk):
-#     # try:
-#     #     post = Post.published.get(id=pk)
-#     # except:
-#     #     raise Http404("No post found!")
-#
-#     post = get_object_or_404(Post, id=pk, status=Post.Status.PUBLISHED)
-#     contex = {'post': post}
-#     return render(request, "blog/detail.html", contex)
+def post_detail(request, pk):
+    # try:
+    #     post = Post.published.get(id=pk)
+    # except:
+    #     raise Http404("No post found!")
 
-class PostDetailView(DetailView):
-    model = Post
-    template_name = 'blog/detail.html'
+    post = get_object_or_404(Post, id=pk, status=Post.Status.PUBLISHED)
+    contex = {'post': post}
+    return render(request, "blog/detail.html", contex)
+
+# class PostDetailView(DetailView):
+#     model = Post
+#     template_name = 'blog/detail.html'
 
 def ticket(request):
 
@@ -75,3 +75,17 @@ def ticket(request):
         form = TicketForm()
 
     return render(request,  'forms/ticket.html', {'form': form})
+
+@require_POST
+def post_comment(request, pk):
+    post = get_object_or_404(Post, id=pk, status=Post.Status.PUBLISHED)
+    comment = None
+    form = CommentForm(data=request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.save()
+
+    context = {'post': post, 'form': form, 'comment': comment}
+    return render(request, 'forms/comment.html', context )
+
