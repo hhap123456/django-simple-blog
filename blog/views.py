@@ -43,7 +43,13 @@ def post_detail(request, pk):
     #     raise Http404("No post found!")
 
     post = get_object_or_404(Post, id=pk, status=Post.Status.PUBLISHED)
-    contex = {'post': post}
+    comments = post.comments.filter(active=True)
+    form = CommentForm()
+    contex = {
+        'post': post,
+        'form': form,
+        'comments': comments,
+      }
     return render(request, "blog/detail.html", contex)
 
 # class PostDetailView(DetailView):

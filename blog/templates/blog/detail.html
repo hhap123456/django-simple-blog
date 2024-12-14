@@ -21,4 +21,22 @@
     <div class="title">{{ post.publish | jformat:"%Y/%M/%d - %H:%I"}}</div>
     </li>
     </ul>
+
+    <br>
+    <div>
+    {% with comments.count as cm_count %}
+    {{ cm_count }} comment{{ cm_count|pluralize }}
+    </div>
+        <div>
+        {% for cm in comments%}
+            {{ cm.body|linebreaks }}
+            <br>
+            {{ cm.name }}
+        {% empty %}
+            کامنتی وجود ندارد
+        {% endfor %}
+        
+        </div>
+    {% endwith %}
+    {% include 'partials/comment.html' %}
 {% endblock %}

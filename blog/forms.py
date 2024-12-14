@@ -26,7 +26,16 @@ class TicketForm(forms.Form):
             else:
                 return phone
 
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('name', 'body')
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if name:
+            if len(name) <3:
+                raise forms.ValidationError(" کوتاه است")
+            else:
+                return name
