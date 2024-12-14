@@ -1,0 +1,13 @@
+{% extends 'parent/base.html' %}
+{% block title %}post list{% endblock %}
+{% load blog_tags%}
+
+
+{#  {{ posts.count }} number of posts #}
+{%  block content %}
+    <p>امار:</p>
+    <p>{% total_posts %}تعداد پست ها:</p>
+    <p>{% total_comments %}تعداد کاممنت ها:</p>
+    <p>تاریخ اخرین پست:{% last_post %}</p>
+
+{% endblock %}
