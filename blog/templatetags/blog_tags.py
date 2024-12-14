@@ -16,3 +16,12 @@ def total_comments():
 @register.simple_tag()
 def last_post():
     return jformat(Post.published.last().publish, "%Y/%M/%d - %H:%I")
+
+@register.inclusion_tag('partials/latest_post.html')
+def latest_post(count=5):
+    last_posts = Post.published.order_by('-publish')[:count]
+    context = {
+        'last_posts': last_posts
+    }
+
+    return context
