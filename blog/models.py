@@ -1,5 +1,3 @@
-from sys import maxunicode
-
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -27,6 +25,7 @@ class Post(models.Model):
     title = models.CharField(max_length=250, verbose_name="عنوان")
     description = models.TextField(blank=True, verbose_name="توضیحات")
     slug = models.SlugField(max_length=250)
+    reading_time = models.PositiveIntegerField(verbose_name="زمان مطالعه")
     # date
     publish = jmodels.jDateTimeField(default=timezone.now, verbose_name="تاریخ انتشار")
     #publish = models.DateTimeField(default=timezone.now, verbose_name="تاریخ انتشار")

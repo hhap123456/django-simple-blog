@@ -1,6 +1,6 @@
 from django import template
 from django_jalali.templatetags.jformat import jformat
-
+from django.db.models import Count
 from ..models import Post, Comment
 
 register = template.Library()
@@ -25,3 +25,7 @@ def latest_post(count=5):
     }
 
     return context
+
+@register.simple_tag()
+def most_popular_posts(count=5):
+    return Post.published.annotate(comments_count=Count('comments')).order_by('-comments_count')[:count]

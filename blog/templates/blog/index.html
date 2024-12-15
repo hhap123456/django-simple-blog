@@ -11,4 +11,10 @@
     <p>تاریخ اخرین پست:{% last_post %}</p>
 
     {% latest_post 10 %}
+    <h2>بهترین پست ها</h2>
+    {% most_popular_posts 10 as pop_posts %}
+    {% for post in pop_posts %}
+        <br>
+        <a href="{{ post.get_absolute_url }}">{{ post.title }} with {{ post.comments_count }} comments</a>
+    {% endfor %}
 {% endblock %}
