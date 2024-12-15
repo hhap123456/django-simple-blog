@@ -46,3 +46,9 @@ ol.alternating-colors {
   li:nth-child(odd):before { border-color: #0aff00; }
   li:nth-child(even):before { border-color: #007bff; }
 }
+.name{
+  border-radius: 100%;
+}
+.cm-body{
+  height: 70px;
+}
