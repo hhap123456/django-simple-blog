@@ -1,6 +1,7 @@
 {% extends 'parent/base.html' %}
 {% block title %}post detail{% endblock %}
 {% load jformat %}  {# Django jalali #}
+{% load blog_tags %}
 
 {% block content %}
     <ul>
@@ -14,7 +15,7 @@
     </li>
     <li class="card" style="--color:#ececec; --bg-color:#032437">
         <div class="icon"><i class="fa-solid fa-circle-star"></i></div>
-        <div class="title">{{ post.description | linebreaks }}</div>>
+        <div class="title">{{ post.description | markdown }}</div>>
     </li>
     <li class="card" style="--color:#ececec; --bg-color:#022F46">
         <div class="icon"><i class="fa-solid fa-chart-column"></i></div>
