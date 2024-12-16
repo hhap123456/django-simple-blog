@@ -9,6 +9,15 @@
     <p>{% total_posts %}تعداد پست ها:</p>
     <p>{% total_comments %}تعداد کاممنت ها:</p>
     <p>تاریخ اخرین پست:{% last_post %}</p>
+    <p>بیشترین زمان مطالعه:{% most_reading_time %}</p>
+    <p>کمترین زمان مطالعه:{% least_reading_time %}</p>
+
+    <h2>فعال ترین کاربرها</h2>
+    {%  active_users 3 as act_usr %}
+    {% for user in act_usr %}
+        <br>
+        {{ user.username }} with {{ user.post_count }}
+    {% endfor %}
 
     {% latest_post 10 %}
     <h2>بهترین پست ها</h2>

@@ -7,10 +7,11 @@
         کامنت ثبت شد
         <a href="{{ post.get_absolute_url }}">بازگشت به پست</a>
     {% else %}
+
     <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="افزودن">
-    {% endif %}
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="افزودن">
+        {% endif %}
     </form>"
 {% endblock %}

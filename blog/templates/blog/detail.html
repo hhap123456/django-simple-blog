@@ -26,7 +26,7 @@
     <br>
     <div>
     {% with comments.count as cm_count %}
-    {{ cm_count }} comment{{ cm_count|pluralize }}
+    {{ cm_count }} comment{{ cm_count | pluralize }}
     </div>
         <div>
         {% for cm in comments%}

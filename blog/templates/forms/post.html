@@ -1,15 +1,15 @@
 {% extends 'parent/base.html' %}
-{% block title %}ticket form{% endblock %}
+{% block title %}post form{% endblock %}
 
 {%  block content %}
 
     <form method="post">
         {% csrf_token %}
-    {#        {% for field in form %}#}
-    {#            {{ field.label_tag }}#}
-    {#            {{ field }}#}
-    {#        {% endfor %}#}
-            {{ form.as_p }}
+            {% for field in form %}
+                {{ field.label_tag }}
+                {{ field }}
+                <br>
+            {% endfor %}
         <input type="submit" value="ثبت">
 
     </form>

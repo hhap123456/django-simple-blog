@@ -2,7 +2,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 
-from .forms import TicketForm, CommentForm
+from .forms import TicketForm, CommentForm, PostForm
 from .models import Post, Ticket
 from django.core import paginator
 from django.views.generic import ListView, DetailView
@@ -81,7 +81,7 @@ def ticket(request):
 
     return render(request,  'forms/ticket.html', {'form': form})
 
-@require_POST
+
 def post_comment(request, pk):
     post = get_object_or_404(Post, id=pk, status=Post.Status.PUBLISHED)
     comment = None
@@ -93,4 +93,25 @@ def post_comment(request, pk):
 
     context = {'post': post, 'form': form, 'comment': comment}
     return render(request, 'forms/comment.html', context )
+
+
+def post_form(request):
+    user = request.user.is_authenticated
+    user2 = request.user
+    print(user)
+    print(user2)
+
+    if request.method == "POST":
+        form = PostForm(data=request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('blog:post_list')
+
+    else:
+        form = PostForm()
+
+    context = {'form': form}
+    return render(request, 'forms/post.html', context)
 
