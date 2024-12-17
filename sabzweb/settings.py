@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     # To change the date and For Persianization
     'django_jalali',
+    # postgres
+    'django.contrib.postgres'
 ]
 
 MIDDLEWARE = [
