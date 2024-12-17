@@ -9,7 +9,8 @@ from django.core import paginator
 from django.views.generic import ListView, DetailView
 from django.views.decorators.http import require_POST
 from django.db.models import Q
-from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+
 
 # Create your views here.
 def index(request):
@@ -136,8 +137,22 @@ def post_search(request):
             # -1-
                 # results = Post.published.filter(Q(title__search=query) | Q(description__search=query))
             # -2-
-            results = Post.published.annotate(search = SearchVector('title',
-                                                                    'description')).filter(search=query)
+                # results = Post.published.annotate(search = SearchVector('title',
+                #                                                    'description')).filter(search=query)
+            # -3-
+            search_query = SearchQuery(query)
+                # search_query = SearchQuery(query) | SearchQuery('word')
+            results = Post.published.annotate(search=SearchVector('title',
+                                                                    'description')).filter(search=search_query)
+            # -4-
+            search_query = SearchQuery(query)
+            search_vector = (SearchVector('title', weight="A") +
+                             SearchVector('description', weight="B"))
+
+            results = Post.published.annotate(search=search_vector, rank=SearchRank(search_vector, search_query))\
+                .filter(rank__gte=0.3).order_by('-rank')
+                # filter(search=search_query)
+
     context = {
         'query': query,
         'results': results
