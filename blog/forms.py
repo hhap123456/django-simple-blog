@@ -89,3 +89,6 @@ class PostForm(forms.ModelForm):
                 raise forms.ValidationError("اسلاگ کوتاه است")
             else:
                 return slug
+
+class SearchForm(forms.Form):
+    query = forms.CharField()
