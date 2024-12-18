@@ -9,7 +9,7 @@ from django.core import paginator
 from django.views.generic import ListView, DetailView
 from django.views.decorators.http import require_POST
 from django.db.models import Q
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, TrigramSimilarity
 
 
 # Create your views here.
@@ -122,36 +122,44 @@ def post_form(request):
 def post_search(request):
     query = None
     results = []
+
     if 'query' in request.GET:
         form = SearchForm(request.GET)
         if form.is_valid():
             query = form.cleaned_data['query']
+        # -0-
             # results1 = Post.published.filter(description__icontains=query)
             # results2 = Post.published.filter(title__icontains=query)
             # results = results1 | results2
 
-            # Q object
+        # Q object
             # results = Post.published.filter(Q(title__icontains=query) | Q(description__icontains=query))
 
             # postgres FTS
-            # -1-
+        # -1-
                 # results = Post.published.filter(Q(title__search=query) | Q(description__search=query))
-            # -2-
+        # -2-
                 # results = Post.published.annotate(search = SearchVector('title',
                 #                                                    'description')).filter(search=query)
-            # -3-
-            search_query = SearchQuery(query)
+        # -3-
+                # search_query = SearchQuery(query)
                 # search_query = SearchQuery(query) | SearchQuery('word')
-            results = Post.published.annotate(search=SearchVector('title',
-                                                                    'description')).filter(search=search_query)
-            # -4-
-            search_query = SearchQuery(query)
-            search_vector = (SearchVector('title', weight="A") +
-                             SearchVector('description', weight="B"))
-
-            results = Post.published.annotate(search=search_vector, rank=SearchRank(search_vector, search_query))\
-                .filter(rank__gte=0.3).order_by('-rank')
-                # filter(search=search_query)
+                #results = Post.published.annotate(search=SearchVector('title',
+                #                                                    'description')).filter(search=search_query)
+        # -4-
+            # search_query = SearchQuery(query)
+            # search_vector = (SearchVector('title', weight="A") +
+            #                  SearchVector('description', weight="B"))
+            #
+            # results = Post.published.annotate(search=search_vector, rank=SearchRank(search_vector, search_query))\
+            #     .filter(rank__gte=0.3).order_by('-rank')
+                    # filter(search=search_query)
+        # -5- TrigramSimilarity
+            results1 = Post.published.annotate(similarity=TrigramSimilarity('title', query),).\
+                       filter(similarity__gt=0.1)
+            results2 = Post.published.annotate(similarity=TrigramSimilarity('description', query),).\
+                        filter(similarity__gt=0.1)
+            results = (results1 | results2).order_by('-similarity')
 
     context = {
         'query': query,
