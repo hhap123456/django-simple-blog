@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Ticket, Comment
+from .models import Post, Ticket, Comment, Image
 from django_jalali.admin.filters import JDateFieldListFilter
 import django_jalali.admin as jadmin
 
@@ -42,3 +42,8 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ('active', ('created', JDateFieldListFilter), ('updated', JDateFieldListFilter),)
     search_fields = ('name', 'body',)
     list_editable = ('active',)
+    
+    
+@admin.register(Image)
+class ImageAdmin(admin.ModelAdmin):
+    list_display = ("post", "created", "title")

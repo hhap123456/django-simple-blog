@@ -13,6 +13,11 @@
         <div class="icon"><i class="fa-solid fa-house"></i></div>
         <div class="title">{{ post.title }} by ({{ post.author }})</div>>
     </li>
+        <div>
+            {% for img in post.images.all %}
+                <img src="{{ img.image_file.url }}" alt="{{ image.title }}">
+            {% endfor %}
+        </div>
     <li class="card" style="--color:#ececec; --bg-color:#032437">
         <div class="icon"><i class="fa-solid fa-circle-star"></i></div>
         <div class="title">{{ post.description | markdown }}</div>>
