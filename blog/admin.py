@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
+
 from .models import Post, Ticket, Comment, Image
 from django_jalali.admin.filters import JDateFieldListFilter
 import django_jalali.admin as jadmin
@@ -8,9 +10,29 @@ admin.sites.AdminSite.site_header = "پنل مدیریت جنگو"
 admin.sites.AdminSite.site_title = "پنل"
 admin.sites.AdminSite.index_title = "پنل مدیریت"
 
+# inlines
+
+class ImageInLine(admin.TabularInline):
+    model = Image
+    extra = 0
+    # i added
+    readonly_fields = ('image_preview',)
+    fields = ('image_file', 'title', 'description', 'image_preview')
+
+    def image_preview(self, obj):
+        print(obj)
+        print("--------------------")
+        if obj.image_file:  # Replace 'image' with your image field name
+            return mark_safe(f'<img src="{obj.image_file.url}" width="280" />')
+        return "No image"
+
+    image_preview.short_description = 'پیش نمایش'
 
 
-# Register your models here.
+class CommentInLine(admin.TabularInline):
+    model = Comment
+    extra = 0
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'short_description', 'publish', 'status')
@@ -23,6 +45,11 @@ class PostAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}      # auto fill slug
     list_editable = ('status',)     # change in main view
     list_display_links = ('title', 'author',)       # make link (blue)
+
+    inlines = [
+        ImageInLine,
+        CommentInLine
+    ]
 
     # i added
     @staticmethod
