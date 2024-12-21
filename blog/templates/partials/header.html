@@ -4,12 +4,12 @@
     <input type="submit" value="چستجو">
 
 </form>
-<p><a href="{% url 'blog:index'%}"> index </a></p>
-<p><a href="{% url 'blog:profile'%}"> profile </a></p>
+<a href="{% url 'blog:index'%}"> index </a>
+<a href="{% url 'blog:profile'%}"> profile </a>
 <br>
 {% if request.user.is_authenticated %}
     <div>
-        <a href="{% url 'blog:profile' %}">{{ request.user.username }}</a>
+        <a href="{% url 'blog:profile' %}">{{ request.user.first_name|default:request.user.username }}</a>
     </div>
 {% else %}
     <div>

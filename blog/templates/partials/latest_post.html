@@ -2,7 +2,6 @@
 <div>
     <h2>اخرین پست ها</h2>
     {% for post in last_posts %}
-        <a href="{{ post.get_absolute_url }}">{{ post.title }} : {{ post.publish | jformat:"%Y/%M/%d - %H:%I"}}</a>
-        <br>
+        <a href="{{ post.get_absolute_url }}">{{ post.title }} : {{ post.publish | jformat:"%Y/%m/%d - %H:%I"}}</a>
     {% endfor %}
 </div>
