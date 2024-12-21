@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
 
 app_name = 'blog'
 
@@ -17,6 +18,9 @@ urlpatterns = [
     path('profile/create_post/<post_id>', views.edit_post, name='edit_post'),
     path('profile/delete_image/<image_id>', views.delete_image, name='delete_image'),
     path('profile/delete_post/<post_id>', views.delete_post, name='delete_post'),
-    path('login', views.user_login, name='login'),
+    # path('login/', views.user_login, name='login'),
+    path('login/', auth_views.LoginView.as_view(), name='login'),   # these templates should be in templates/registration
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    # path('logout/', views.logout, name='logout'),
 
 ]

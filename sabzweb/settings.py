@@ -31,14 +31,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # my app
+    'blog.apps.BlogConfig',  # to see our custom logout template in registration/logged_out.html
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # my app
-    'blog.apps.BlogConfig',
+
     # To change the date and For Persianization
     'django_jalali',
     # postgres
@@ -150,3 +152,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # DJANGORESIZED_DEFAULTS_FORMAT_EXTENTIONS = [1980, 1080]
 DJANGORESIZED_NORMALIZE_ROTATION = {'JPEG': ".jpg"}
 DJANGORESIZED_DEFAULTS_SIZE = False
+
+LOGIN_REDIRECT_URL = 'blog:index'   # go to index after login
+
+LOGIN_URL = 'blog:login'
+LOGOUT_URL = 'blog:logout'

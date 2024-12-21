@@ -3,7 +3,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 
-from .forms import TicketForm, CommentForm, SearchForm, CreatePostForm, LoginForm  # , PostForm
+from .forms import TicketForm, CommentForm, SearchForm, CreatePostForm # , LoginForm  # , PostForm
 from .models import Post, Ticket, Image
 from django.core import paginator
 from django.views.generic import ListView, DetailView
@@ -11,6 +11,8 @@ from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, TrigramSimilarity
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 def index(request):
@@ -116,7 +118,7 @@ def post_comment(request, pk):
 
 def post_search(request):
     query = None
-    results = []
+    resultes = []
 
     if 'query' in request.GET:
         form = SearchForm(request.GET)
@@ -177,7 +179,7 @@ def post_search(request):
 
     return render(request, 'blog/search.html', context)
 
-
+@login_required
 def profile(request):
     user = request.user
     posts = Post.published.filter(author=user)
@@ -185,6 +187,7 @@ def profile(request):
     return render(request, 'blog/profile.html', {'posts': posts})
 
 
+@login_required
 def create_post(request):
     if request.method == "POST":
         form = CreatePostForm(request.POST, request.FILES)  # request.FILES -> for files ( images )
@@ -205,6 +208,7 @@ def create_post(request):
     return render(request, 'forms/create-post.html', {'form': form})
 
 
+@login_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if request.method == "POST":
@@ -215,6 +219,7 @@ def delete_post(request, post_id):
         return render(request, 'forms/delete-post.html', {'post': post})
 
 
+@login_required
 def edit_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if request.method == "POST":
@@ -236,6 +241,7 @@ def edit_post(request, post_id):
     return render(request, 'forms/create-post.html', {'form': form, 'post': post})
 
 
+@login_required
 def delete_image(request, image_id):
     image = get_object_or_404(Image, id=image_id)
 
@@ -243,23 +249,28 @@ def delete_image(request, image_id):
     return redirect('blog:profile')
 
 
-def user_login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            user = authenticate(request, username=cd['username'], password=cd['password'])
+# def user_login(request):
+#     if request.method == 'POST':
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             cd = form.cleaned_data
+#             user = authenticate(request, username=cd['username'], password=cd['password'])
+#
+#             if user is not None:
+#                 if user.is_active:
+#                     login(request, user)
+#                     return redirect('blog:profile')
+#                 else:
+#                     return HttpResponse('Your account is disabled.')
+#
+#             else:
+#                 return HttpResponse('Invalid login credentials.')
+#
+#     else:
+#         form = LoginForm()
+#         return render(request,'forms/login.html', {'form': form})
 
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return redirect('blog:profile')
-                else:
-                    return HttpResponse('Your account is disabled.')
-
-            else:
-                return HttpResponse('Invalid login credentials.')
-
-    else:
-        form = LoginForm()
-        return render(request,'forms/login.html', {'form': form})
+def user_logout(request):
+    logout(request)
+    # return redirect('blog:index')
+    return redirect(request.META.get('HTTP_REFERER')) # go to previous page
