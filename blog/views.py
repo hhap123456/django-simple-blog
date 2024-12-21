@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 
 from .forms import TicketForm, CommentForm, PostForm, SearchForm
-from .models import Post, Ticket
+from .models import Post, Ticket, Image
 from django.core import paginator
 from django.views.generic import ListView, DetailView
 from django.views.decorators.http import require_POST
@@ -37,7 +37,7 @@ class PostListView(ListView):
     #model = Post    # -> Post.object.all()
     queryset = Post.published.all()
     context_object_name = 'posts'
-    paginate_by = 3 # limit to 3 in a page
+    paginate_by = 5 # limit to 3 in a page
     template_name = 'blog/list.html'
 
 def post_detail(request, pk):
@@ -155,11 +155,25 @@ def post_search(request):
             #     .filter(rank__gte=0.3).order_by('-rank')
                     # filter(search=search_query)
         # -5- TrigramSimilarity
-            results1 = Post.published.annotate(similarity=TrigramSimilarity('title', query),).\
-                       filter(similarity__gt=0.1)
-            results2 = Post.published.annotate(similarity=TrigramSimilarity('description', query),).\
-                        filter(similarity__gt=0.1)
-            results = (results1 | results2).order_by('-similarity')
+            post_results1 = Post.published.annotate(similarity=TrigramSimilarity('title', query),).\
+                filter(similarity__gt=0.1)
+            post_results2 = Post.published.annotate(similarity=TrigramSimilarity('description', query),).\
+                filter(similarity__gt=0.1)
+
+
+            # Search in the Image model
+            image_results1 = Image.objects.annotate(similarity=TrigramSimilarity('title', query),) \
+                    .filter(similarity__gt=0.1)
+
+            image_results2 = Image.objects.annotate(similarity=TrigramSimilarity('description', query),)\
+                    .filter(similarity__gt=0.1)
+
+            post_results = (post_results1 | post_results2 ).order_by('-similarity')
+            image_results = (image_results1 | image_results2 ).order_by('-similarity')
+
+            combined_results = list(post_results) + list(image_results)
+
+            results = sorted(combined_results, key=lambda x: x.similarity, reverse=True)
 
     context = {
         'query': query,

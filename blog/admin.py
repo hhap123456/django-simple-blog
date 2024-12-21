@@ -20,8 +20,6 @@ class ImageInLine(admin.TabularInline):
     fields = ('image_file', 'title', 'description', 'image_preview')
 
     def image_preview(self, obj):
-        print(obj)
-        print("--------------------")
         if obj.image_file:  # Replace 'image' with your image field name
             return mark_safe(f'<img src="{obj.image_file.url}" width="280" />')
         return "No image"

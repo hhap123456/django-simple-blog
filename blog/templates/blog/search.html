@@ -1,5 +1,6 @@
 {% extends 'parent/base.html' %}
-{% block title %}post search{% endblock %}
+{% load blog_tags %}
+{% block title %}obj search{% endblock %}
 
 
 {% block content %}
@@ -8,10 +9,17 @@
         {{ results.count  }} : پست ها {{ query }} نتایج جستجو
     {% endif %}
     <br>
-    {% for post in results %}
-        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-        <p>{{ post.description }}</p>
-        <br>
+    {% for obj in results %}
+        {% if obj|is_post  %}
+            <a href="{{ obj.get_absolute_url }}">{{ obj.title }}</a>
+            <p>{{ obj.description }}</p>
+
+        {% elif obj|is_image %}
+            <p>{{ obj.post.title }}</p>
+            <a href="{{ obj.post.get_absolute_url }}"> <img src="{{ obj.image_file.url }}" alt="{{ image.title }}" >
+            </a>
+        <hr>
+        {% endif %}
     {%  empty %}
         <p>پستی یافت نشد</p>
     {% endfor %}

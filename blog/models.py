@@ -1,3 +1,6 @@
+import os
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -96,9 +99,18 @@ class Comment(models.Model):
         def __str__(self):
             return f"{self.name}:{self.post}"
 
+def upload_to_monthly(instance, filename):
+    """Generate a dynamic upload path based on the current month and year."""
+    # Get the current year and month
+    year_month = datetime.now().strftime('%Y-%m')
+    # Construct the folder path
+    folder_path = os.path.join('post_images', year_month)
+    # Return the full path for the uploaded file
+    return os.path.join(folder_path, filename)
+
 class Image(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="images", verbose_name="پست")
-    image_file = ResizedImageField(upload_to='post_images', size=[640, 360], quality=100, crop=['middle', 'center'])
+    image_file = ResizedImageField(upload_to=upload_to_monthly, size=[640, 360], quality=100, crop=['middle', 'center'])
     title = models.CharField(max_length=250, null=True, blank=True, verbose_name="عنوان")
     description = models.TextField(null=True, blank=True, verbose_name="توضیحات")
     # date
@@ -112,5 +124,12 @@ class Image(models.Model):
         verbose_name = "تصویر"
         verbose_name_plural = "تصویر ها"
 
-        def __str__(self):
-            return self.title if self.title else "None"
+    def __str__(self):
+        return self.title if self.title else os.path.basename(self.image_file.name)
+
+    def delete(self, *args, **kwargs):
+        # Delete the image file from the filesystem
+        if self.image_file:
+            if os.path.isfile(self.image_file.path):
+                os.remove(self.image_file.path)
+        super().delete(*args, **kwargs)

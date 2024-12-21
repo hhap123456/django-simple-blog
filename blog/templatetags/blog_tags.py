@@ -47,3 +47,12 @@ def least_reading_time():
 @register.simple_tag()
 def active_users(count=5):
     return User.objects.annotate(post_count=Count('user_posts')).order_by('-post_count')[:count]
+
+@register.filter
+def is_post(obj):
+    return obj.__class__.__name__ == 'Post'
+
+@register.filter
+def is_image(obj):
+    print(obj.__class__.__name__ )
+    return obj.__class__.__name__ == 'Image'
