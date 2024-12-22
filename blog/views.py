@@ -3,7 +3,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 
-from .forms import TicketForm, CommentForm, PostForm, SearchForm
+from .forms import TicketForm, CommentForm, SearchForm, CreatePostForm # , PostForm
 from .models import Post, Ticket, Image
 from django.core import paginator
 from django.views.generic import ListView, DetailView
@@ -79,7 +79,7 @@ def ticket(request):
             # ticket_obj.subject = cd['subject']
             # ticket_obj.save()
 
-            return redirect('blog:post_list')
+            return redirect('blog:profile')
     else:
         form = TicketForm()
 
@@ -99,20 +99,20 @@ def post_comment(request, pk):
     return render(request, 'forms/comment.html', context )
 
 
-def post_form(request):
-    if request.method == "POST":
-        form = PostForm(data=request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.save()
-            return redirect('blog:post_list')
-
-    else:
-        form = PostForm()
-
-    context = {'form': form}
-    return render(request, 'forms/post.html', context)
+# def post_form(request):
+#     if request.method == "POST":
+#         form = PostForm(data=request.POST)
+#         if form.is_valid():
+#             post = form.save(commit=False)
+#             post.author = request.user
+#             post.save()
+#             return redirect('blog:post_list')
+#
+#     else:
+#         form = PostForm()
+#
+#     context = {'form': form}
+#     return render(request, 'forms/post.html', context)
 
 def post_search(request):
     query = None
@@ -183,3 +183,24 @@ def profile(request):
     posts = Post.published.filter(author=user)
 
     return render(request, 'blog/profile.html', {'posts': posts})
+
+
+def create_post(request):
+    if request.method == "POST":
+        form = CreatePostForm(request.POST, request.FILES)  # request.FILES -> for files ( images )
+
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+
+            Image.objects.create(image_file= form.cleaned_data['image1'], post=post,)
+            Image.objects.create(image_file= form.cleaned_data['image2'], post=post,)
+
+            return redirect('blog:post_list')
+
+    else:
+        form = CreatePostForm()
+
+    return render(request, 'forms/create_post.html', {'form': form})
+

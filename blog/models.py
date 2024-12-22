@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.urls import reverse
 from django_jalali.db import models as jmodels
 from django_resized import ResizedImageField
+from django.template.defaultfilters import slugify
+
 
 
 #Managers
@@ -62,6 +64,12 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('blog:post_detail', args=[self.id])
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title) # Auto slug
+
+        super().save(*args, **kwargs)
 
 
 class Ticket(models.Model):

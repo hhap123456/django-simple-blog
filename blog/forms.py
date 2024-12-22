@@ -53,42 +53,51 @@ class CommentForm(forms.ModelForm):
                 return name
 
 
-class PostForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ('title', 'description','slug', 'reading_time',)
-
-    def clean_title(self):
-        title = self.cleaned_data['title']
-        if title:
-            if len(title) <3:
-                raise forms.ValidationError("عنوان کوتاه است")
-            else:
-                return title
-
-    def clean_reading_time(self):
-        time = self.cleaned_data['reading_time']
-        if time:
-            if time > 0:
-                return time
-        else:
-            raise forms.ValidationError("زمان مطالعه نمیتواند خالی باشد")
-
-    def clean_description(self):
-        description = self.cleaned_data['description']
-        if description:
-            if len(description) < 10:
-                raise forms.ValidationError("توضیحات کوتاه است")
-            else:
-                return description
-
-    def clean_slug(self):
-        slug = self.cleaned_data['slug']
-        if slug:
-            if len(slug) <4:
-                raise forms.ValidationError("اسلاگ کوتاه است")
-            else:
-                return slug
+# class PostForm(forms.ModelForm):
+#     class Meta:
+#         model = Post
+#         fields = ('title', 'description','slug', 'reading_time',)
+#
+#     def clean_title(self):
+#         title = self.cleaned_data['title']
+#         if title:
+#             if len(title) <3:
+#                 raise forms.ValidationError("عنوان کوتاه است")
+#             else:
+#                 return title
+#
+#     def clean_reading_time(self):
+#         time = self.cleaned_data['reading_time']
+#         if time:
+#             if time > 0:
+#                 return time
+#         else:
+#             raise forms.ValidationError("زمان مطالعه نمیتواند خالی باشد")
+#
+#     def clean_description(self):
+#         description = self.cleaned_data['description']
+#         if description:
+#             if len(description) < 10:
+#                 raise forms.ValidationError("توضیحات کوتاه است")
+#             else:
+#                 return description
+#
+#     def clean_slug(self):
+#         slug = self.cleaned_data['slug']
+#         if slug:
+#             if len(slug) <4:
+#                 raise forms.ValidationError("اسلاگ کوتاه است")
+#             else:
+#                 return slug
 
 class SearchForm(forms.Form):
     query = forms.CharField()
+
+
+class CreatePostForm(forms.ModelForm):
+    image1 = forms.ImageField(label='تصاویر')
+    image2 = forms.ImageField(label='2تصاویر')
+
+    class Meta:
+        model = Post
+        fields = ('title', 'description', 'reading_time')
