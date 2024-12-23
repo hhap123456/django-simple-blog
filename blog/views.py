@@ -214,3 +214,30 @@ def delete_post(request, post_id):
     else:
         return render(request, 'forms/delete-post.html', {'post': post})
 
+
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == "POST":
+        form = CreatePostForm(request.POST, request.FILES, instance=post)  # instance -> when obj is available
+
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+
+            Image.objects.create(image_file= form.cleaned_data['image1'], post=post,)
+            Image.objects.create(image_file= form.cleaned_data['image2'], post=post,)
+
+            return redirect('blog:post_list')
+
+    else:
+        form = CreatePostForm(instance=post)
+
+    return render(request, 'forms/create-post.html', {'form': form, 'post': post})
+
+
+def delete_image(request, image_id):
+    image = get_object_or_404(Image, id=image_id)
+
+    image.delete()
+    return redirect('blog:profile')

@@ -78,6 +78,13 @@ class Post(models.Model):
             storage.delete(path)
         super().delete(*args, **kwargs)
 
+        # def delete(self, *args, **kwargs):
+        #     # Delete the image file from the filesystem
+        #     if self.image_file:
+        #         if os.path.isfile(self.image_file.path):
+        #             os.remove(self.image_file.path)
+        #     super().delete(*args, **kwargs)
+
 class Ticket(models.Model):
     massage = models.TextField( verbose_name="پیام")
     name = models.CharField(max_length=250, verbose_name="نام")
