@@ -157,3 +157,5 @@ LOGIN_REDIRECT_URL = 'blog:index'   # go to index after login
 
 LOGIN_URL = 'blog:login'
 LOGOUT_URL = 'blog:logout'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # for see emails in console
