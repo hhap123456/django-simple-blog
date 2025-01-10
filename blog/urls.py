@@ -1,3 +1,4 @@
+from django.contrib.messages import success
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
@@ -22,5 +23,8 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(), name='login'),   # these templates should be in templates/registration
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     # path('logout/', views.logout, name='logout'),
+
+    path('password-change/', auth_views.PasswordChangeView.as_view(success_url='done'), name='password_change'),
+    path('password-change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
 
 ]
