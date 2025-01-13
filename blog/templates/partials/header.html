@@ -6,6 +6,7 @@
 </form>
 <a href="{% url 'blog:index'%}"> index </a>
 <a href="{% url 'blog:profile'%}"> profile </a>
+<a href="{% url 'blog:post_list'%}"> posts </a>
 <br>
 {% if request.user.is_authenticated %}
     <div>

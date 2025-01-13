@@ -4,7 +4,18 @@
 
 {#  {{ posts.count }} number of posts #}
 {%  block content %}
-    <h1>post-list</h1>
+
+    <a href="{% url 'blog:post_list_category' 'تکنولوژی' %}">تکنولوژی</a>
+    <a href="{% url 'blog:post_list_category' 'برنامه نویسی' %}">برنامه نویسی</a>
+    <a href="{% url 'blog:post_list_category' 'هوش مصنوعی' %}">هوش مصنوعی</a>
+    <a href="{% url 'blog:post_list_category' 'بلاکچین' %}">بلاکچین</a>
+    <a href="{% url 'blog:post_list_category' 'سایر' %}">سایر</a>
+    {% if category %}
+        <h1>post-list of {{ category }}</h1>
+    {% else %}
+        <h1>post-list</h1>
+    {% endif %}
+
     <ol class="alternating-colors">
 
     {% for post in posts %}
@@ -17,5 +28,6 @@
         </li>
     {% endfor %}
     </ol>
-    {% include 'partials/pagination.html' with page=page_obj %}
+{#    {% include 'partials/pagination.html' with page=page_obj %}#}
+    {% include 'partials/pagination.html' with page=posts %}
 {% endblock %}

@@ -24,6 +24,15 @@ class Post(models.Model):
         DRAFT = 'DR',   'Draft'
         PUBLISHED = 'PB', 'Published'
         REJECTED = 'RJ', 'Rejected',
+
+    CATEGORY_CHOICES = (
+        ('تکنولوژی', 'تکنولوژی'),
+        ('برنامه نویسی', 'برنامه نویسی'),
+        ('هوش مصنوعی', 'هوش مصنوعی'),
+        ('بلاکچین', 'بلاکچین'),
+        ('سایر', 'سایر'),
+
+    )
     # relations
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_posts', verbose_name='نویسنده')
         # many-to-one relation
@@ -35,6 +44,8 @@ class Post(models.Model):
     description = models.TextField(blank=True, verbose_name="توضیحات")
     slug = models.SlugField(max_length=250)
     reading_time = models.PositiveIntegerField(verbose_name="زمان مطالعه")
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='سایر')
+
     # date
     publish = jmodels.jDateTimeField(default=timezone.now, verbose_name="تاریخ انتشار")
     #publish = models.DateTimeField(default=timezone.now, verbose_name="تاریخ انتشار")

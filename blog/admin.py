@@ -33,7 +33,7 @@ class CommentInLine(admin.TabularInline):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'short_description', 'publish', 'status')
+    list_display = ('title', 'author', 'short_description', 'publish', 'category', 'status')
         # description >> short_description
     ordering = ('-publish',)
     list_filter = ['status', ('publish', JDateFieldListFilter), 'author']  # set filter buttons
@@ -41,7 +41,7 @@ class PostAdmin(admin.ModelAdmin):
     raw_id_fields = ('author',)     # new author panel in add/change post
     date_hierarchy = 'publish'
     prepopulated_fields = {"slug": ("title",)}      # auto fill slug
-    list_editable = ('status',)     # change in main view
+    list_editable = ('status','category')     # change in main view
     list_display_links = ('title', 'author',)       # make link (blue)
 
     inlines = [

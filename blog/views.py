@@ -19,29 +19,33 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     return render(request, 'blog/index.html')
 
-# def post_list(request):
-#     posts = Post.published.all()
-#     paginator = Paginator(posts, 3)  # Pagination
-#     page_number = request.GET.get('page', 1)
-#     try:
-#         posts = paginator.page(page_number)
-#     except EmptyPage:
-#         posts = paginator.page(paginator.num_pages)
-#     except PageNotAnInteger:
-#         posts = paginator.page(1)
-#
-#     contex = {
-#         'posts': posts
-#     }
-#
-#     return render(request, "blog/list.html", contex)
+def post_list(request, category=None):
+    if category:
+        posts = Post.objects.filter(category=category)
+    else:
+        posts = Post.published.all()
+    paginator = Paginator(posts, 3)  # Pagination
+    page_number = request.GET.get('page', 1)
+    try:
+        posts = paginator.page(page_number)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
 
-class PostListView(ListView):
-    #model = Post    # -> Post.object.all()
-    queryset = Post.published.all()
-    context_object_name = 'posts'
-    paginate_by = 5 # limit to 3 in a page
-    template_name = 'blog/list.html'
+    contex = {
+        'posts': posts,
+        'category': category,
+    }
+
+    return render(request, "blog/list.html", contex)
+
+# class PostListView(ListView):
+#     #model = Post    # -> Post.object.all()
+#     queryset = Post.published.all()
+#     context_object_name = 'posts'
+#     paginate_by = 5 # limit to 3 in a page
+#     template_name = 'blog/list.html'
 
 def post_detail(request, pk):
     # try:
