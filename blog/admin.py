@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Post, Ticket, Comment, Image
+from .models import Post, Ticket, Comment, Image, Account
 from django_jalali.admin.filters import JDateFieldListFilter
 import django_jalali.admin as jadmin
 
@@ -72,3 +72,7 @@ class CommentAdmin(admin.ModelAdmin):
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
     list_display = ("post", "created", "title")
+
+@admin.register(Account)
+class AccountAdmin(admin.ModelAdmin):
+    list_display = ['user', 'date_of_birth', 'job', 'bio', 'photo']

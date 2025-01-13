@@ -3,8 +3,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 
-from .forms import TicketForm, CommentForm, SearchForm, CreatePostForm # , LoginForm  # , PostForm
-from .models import Post, Ticket, Image
+from .forms import TicketForm, CommentForm, SearchForm, CreatePostForm, \
+    UserRegistrationForm, UserEditForm, AccountEditForm  # , LoginForm  # , PostForm
+from .models import Post, Ticket, Image, Account
 from django.core import paginator
 from django.views.generic import ListView, DetailView
 from django.views.decorators.http import require_POST
@@ -197,8 +198,13 @@ def create_post(request):
             post.author = request.user
             post.save()
 
-            Image.objects.create(image_file= form.cleaned_data['image1'], post=post,)
-            Image.objects.create(image_file= form.cleaned_data['image2'], post=post,)
+            image1 = form.cleaned_data['image1']
+            image2 = form.cleaned_data['image2']
+
+            if image1:
+                Image.objects.create(image_file= image1, post=post,)
+            if image2:
+                Image.objects.create(image_file= image2, post=post,)
 
             return redirect('blog:post_list')
 
@@ -274,3 +280,37 @@ def user_logout(request):
     logout(request)
     # return redirect('blog:index')
     return redirect(request.META.get('HTTP_REFERER')) # go to previous page
+
+def register(request):
+    if request.method == "POST":
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password2'])    # set_password -> save as hash
+            user.save()
+            Account.objects.create(user=user)
+            return render(request, 'registration/register_done.html', {'user': user})
+
+    else:
+        form = UserRegistrationForm()
+
+    return render(request, 'registration/register.html', {'form' : form})
+
+@login_required
+def edit_account(request):
+    if request.method == "POST":
+        user_form = UserEditForm(request.POST, instance=request.user)
+        account_form = AccountEditForm(request.POST, request.FILES, instance=request.user.account)
+        if account_form.is_valid() and user_form.is_valid():
+            account_form.save()
+            user_form.save()
+
+    else:
+        user_form = UserEditForm(instance=request.user)
+        account_form = AccountEditForm(instance=request.user.account)
+
+    context = {
+        'user_form': user_form,
+        'account_form': account_form
+               }
+    return render(request, 'registration/edit_account.html', context)

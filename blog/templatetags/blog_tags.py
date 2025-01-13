@@ -17,7 +17,7 @@ def total_comments():
 
 @register.simple_tag()
 def last_post():
-    return jformat(Post.published.first().publish, "%Y/%M/%d - %H:%I")
+    return jformat(Post.published.first().publish, "%Y/%m/%d - %H:%I")
 
 @register.inclusion_tag('partials/latest_post.html')
 def latest_post(count=5):

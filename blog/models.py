@@ -4,6 +4,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.files.storage import storages
 from django.db import models
+from django.db.models import CASCADE
 from django.utils import timezone
 from django.urls import reverse
 from django_jalali.db import models as jmodels
@@ -58,7 +59,6 @@ class Post(models.Model):
         ]
         verbose_name = 'پست'
         verbose_name_plural = 'پست ها'
-
 
     def __str__(self):
         return self.title
@@ -120,6 +120,7 @@ class Comment(models.Model):
         def __str__(self):
             return f"{self.name}:{self.post}"
 
+
 def upload_to_monthly(instance, filename):
     """Generate a dynamic upload path based on the current month and year."""
     # Get the current year and month
@@ -154,3 +155,18 @@ class Image(models.Model):
             if os.path.isfile(self.image_file.path):
                 os.remove(self.image_file.path)
         super().delete(*args, **kwargs)
+
+
+class Account(models.Model):
+    user = models.OneToOneField(User, related_name='account', on_delete=CASCADE) # OneToOneField -> each user has an account and vice versa
+    date_of_birth = jmodels.jDateField(blank=True, null=True, verbose_name='تاریخ تولد')   # blank=True, null=True -> it is completely optional
+    bio = models.TextField(null=True, blank=True, verbose_name="بایو")
+    photo = ResizedImageField(upload_to='account_images/', size=[500, 500], quality=80, crop=['middle', 'center'], null=True, blank=True)
+    job = models.CharField(max_length=250, verbose_name='شغل', null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+    class Meta:
+        verbose_name = 'اکانت'
+        verbose_name_plural = 'اکانت ها'

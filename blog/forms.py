@@ -1,6 +1,7 @@
+from django.contrib.auth.models import User
 from django.template.defaultfilters import title
 
-from .models import Comment, Post
+from .models import Comment, Post, Account
 from django import forms
 
 class TicketForm(forms.Form):
@@ -95,8 +96,8 @@ class SearchForm(forms.Form):
 
 
 class CreatePostForm(forms.ModelForm):
-    image1 = forms.ImageField(label='تصاویر')
-    image2 = forms.ImageField(label='2تصاویر')
+    image1 = forms.ImageField(label='تصاویر' , required=False)
+    image2 = forms.ImageField(label='2تصاویر', required=False)
 
     class Meta:
         model = Post
@@ -106,3 +107,29 @@ class CreatePostForm(forms.ModelForm):
 # class LoginForm(forms.Form):
 #     username = forms.CharField(max_length=250, required=True)
 #     password = forms.CharField(max_length=250, required=True, widget=forms.PasswordInput)
+
+
+class UserRegistrationForm(forms.ModelForm):
+    password1 = forms.CharField(widget=forms.PasswordInput, label='password')
+    password2 = forms.CharField(widget=forms.PasswordInput, label='repeat password')
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email')
+
+    def clean_password2(self):
+        cd = self.cleaned_data
+        if cd['password1'] != cd['password2']:
+            raise forms.ValidationError('رمز ها مطابقت ندارند!')
+        return cd['password2']
+
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+class AccountEditForm(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = ('job', 'date_of_birth', 'photo', 'bio')
