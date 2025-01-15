@@ -36,5 +36,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('account/edit', views.edit_account, name='edit_account'),
 
+    path('authors/<int:pk>', views.author_detail, name='author_detail'),
+
 
 ]

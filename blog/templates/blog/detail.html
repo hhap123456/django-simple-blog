@@ -11,7 +11,7 @@
     </li>
     <li class="card" style="--color:#ececec; --bg-color:#E98B43">
         <div class="icon"><i class="fa-solid fa-house"></i></div>
-        <div class="title">{{ post.title }} by ({{ post.author }})</div>>
+        <div class="title">{{ post.title }} by ( <a href="{% url 'blog:author_detail' post.author.id %}">{{ post.author }}</a> )</div>>
     </li>
         <div>
             {% for img in post.images.all %}

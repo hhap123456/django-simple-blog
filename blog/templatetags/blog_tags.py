@@ -1,6 +1,7 @@
 from django import template
+from django.template.defaulttags import comment
 from django_jalali.templatetags.jformat import jformat
-from django.db.models import Count
+from django.db.models import Count, Q
 from ..models import Post, Comment,User
 from markdown import markdown
 from django.utils.safestring import mark_safe
@@ -54,5 +55,8 @@ def is_post(obj):
 
 @register.filter
 def is_image(obj):
-    print(obj.__class__.__name__ )
     return obj.__class__.__name__ == 'Image'
+
+@register.simple_tag()
+def most_popular_author_posts(pk, count=5):
+    return Post.published.filter(author_id=pk).annotate(comments_count=Count('comments', filter=Q(comments__active=True))).order_by('-comments_count')[:count]

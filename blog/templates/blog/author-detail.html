@@ -1,0 +1,31 @@
+{% extends 'parent/base.html' %}
+{% load blog_tags %}
+{% block title %}author detail{% endblock %}
+
+{% block content %}
+    <div>
+        {% if account.photo %}
+        	<img src="{{ account.photo.url }}" alt="{{ account.user }}">
+        {% else %}
+            <img src="{{ '/media/avatars/Untitled.jpeg' }}" alt="{{ user }}">
+        {% endif %} 
+
+        <h1>{{ user.username }}</h1>
+        <h3>USER INFO</h3>
+        date-of-birth : {{ account.date_of_birth }}
+        <br>
+        job : {{ account.job }}
+        <br>
+        bio : {{ account.bio }}
+
+
+    </div>
+    <div>
+    {% most_popular_author_posts user.id  5 as pop_posts %}
+    {% for post in pop_posts %}
+        <p><a href="{{ post.get_absolute_url }}">{{ post }}</a> WITH {{ post.comments_count }}</p>
+
+    {% endfor %}
+    </div>
+
+{% endblock %}

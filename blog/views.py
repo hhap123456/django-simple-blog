@@ -1,11 +1,11 @@
-from django.contrib.admin.templatetags.admin_list import results
+from django.contrib.admin.templatetags.admin_list import results, change_list_object_tools_tag
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 
 from .forms import TicketForm, CommentForm, SearchForm, CreatePostForm, \
     UserRegistrationForm, UserEditForm, AccountEditForm  # , LoginForm  # , PostForm
-from .models import Post, Ticket, Image, Account
+from .models import Post, Ticket, Image, Account, User
 from django.core import paginator
 from django.views.generic import ListView, DetailView
 from django.views.decorators.http import require_POST
@@ -36,6 +36,7 @@ def post_list(request, category=None):
     contex = {
         'posts': posts,
         'category': category,
+        'users': User.objects.all(),
     }
 
     return render(request, "blog/list.html", contex)
@@ -123,7 +124,7 @@ def post_comment(request, pk):
 
 def post_search(request):
     query = None
-    resultes = []
+    results = []
 
     if 'query' in request.GET:
         form = SearchForm(request.GET)
@@ -318,3 +319,16 @@ def edit_account(request):
         'account_form': account_form
                }
     return render(request, 'registration/edit_account.html', context)
+
+
+def author_detail(request, pk):
+    user = get_object_or_404(User, id=pk)
+    account = user.account
+
+    context = {
+        'user': user,
+        'account': account,
+    }
+    return render(request, 'blog/author-detail.html', context)
+
+

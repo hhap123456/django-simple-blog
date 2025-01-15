@@ -21,10 +21,15 @@
     {% for post in posts %}
         <li>
         <strong>
-        <a href="{{ post.get_absolute_url }}"> {{ post.title}}</a>
+            <a href="{{ post.get_absolute_url }}"> {{ post.title}}</a>
+            <a href="{% url 'blog:author_detail' post.author.id%}"> {{ post.author}}</a>
         </strong>
         <p>{{ post.description | truncatewords:5 }}</p>
-        <img src="{{ post.images.first.image_file.url }}" alt="{{ post.images.first.title }}">
+            {% if post.images.first %}
+                <img src="{{ post.images.first.image_file.url }}" alt="{{ post.images.first.title }}">
+            {% else %}
+                <img src="{{ '/media/images/no-post.png' }}" alt="{{ post.images.first.title }}">
+            {% endif %}
         </li>
     {% endfor %}
     </ol>
