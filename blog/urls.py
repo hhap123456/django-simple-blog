@@ -14,7 +14,7 @@ urlpatterns = [
     path('ticket/', views.ticket, name='ticket'),
     path('posts/<pk>/comment', views.post_comment, name='post_comment'),
     path('search/', views.post_search, name='post_search'),
-    path('profile/', views.profile, name='profile'),
+    path('profile/', views.Profile.as_view(), name='profile'),
     path('profile/create_post/', views.create_post, name='create_post'),
     path('profile/create_post/<post_id>', views.edit_post, name='edit_post'),
     path('profile/delete_image/<image_id>', views.delete_image, name='delete_image'),
@@ -37,6 +37,7 @@ urlpatterns = [
     path('account/edit', views.edit_account, name='edit_account'),
 
     path('authors/<int:pk>', views.author_detail, name='author_detail'),
+    path('authors/comments/<int:post_id>', views.author_comment_dashboard, name='author_comment_dashboard'),
 
 
 ]

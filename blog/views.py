@@ -2,6 +2,8 @@ from django.contrib.admin.templatetags.admin_list import results, change_list_ob
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
+from django.template.context_processors import request
+from django.utils.translation.template import context_re
 
 from .forms import TicketForm, CommentForm, SearchForm, CreatePostForm, \
     UserRegistrationForm, UserEditForm, AccountEditForm  # , LoginForm  # , PostForm
@@ -185,13 +187,20 @@ def post_search(request):
 
     return render(request, 'blog/search.html', context)
 
-@login_required
-def profile(request):
-    user = request.user
-    posts = Post.published.filter(author=user)
+# @login_required
+# def profile(request):
+#     user = request.user
+#     posts = Post.published.filter(author=user)
+#
+#     return render(request, 'blog/profile.html', {'posts': posts})
 
-    return render(request, 'blog/profile.html', {'posts': posts})
+class Profile(ListView):
+    template_name = 'blog/profile.html'
+    context_object_name = 'posts'
+    paginate_by = 5
 
+    def get_queryset(self):
+        return Post.published.filter(author=self.request.user)
 
 @login_required
 def create_post(request):
@@ -330,5 +339,18 @@ def author_detail(request, pk):
         'account': account,
     }
     return render(request, 'blog/author-detail.html', context)
+
+
+@login_required()
+def author_comment_dashboard(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    context = {
+        'comments' : post.comments.filter(active=True).all(),
+        'post': post
+    }
+    if request.user == post.author:
+        return render(request, 'blog/author_comment_dashboard.html', context)
+    else:
+        return Http404
 
 

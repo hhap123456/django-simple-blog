@@ -1,0 +1,15 @@
+{% extends 'parent/base.html' %}
+
+{% block title%}Comments{% endblock %}
+
+{% block content %}
+    <div>
+        <h1>{{ post.title }} published in {{ post.publish|date:"Y/m/j g:i " }}</h1>
+    {% for cm in comments %}
+        <h2>{{ cm.name }} at {{ cm.created|date:"Y/m/j g:i " }}</h2>
+        <p>{{ cm.body }}</p>
+    {% endfor %}
+    </div>
+
+
+{% endblock %}
