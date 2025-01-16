@@ -12,6 +12,19 @@
     <p>بیشترین زمان مطالعه:{% most_reading_time %}</p>
     <p>کمترین زمان مطالعه:{% least_reading_time %}</p>
 
+
+    <h2>پست پیشنهادی</h2>
+    {% suggested_post as sj_post %}
+    <div>
+    {% if sj_post.images.first %}
+        <a href="{{ sj_post.get_absolute_url }}"><img src="{{ sj_post.images.first.image_file.url }}"></a>
+    {% else %}
+        <a href="{{ sj_post.get_absolute_url }}"><img src="{{ '/media/images/no-post.png' }}"></a>
+    {% endif %}
+        <h3><a href="{{ sj_post.get_absolute_url }}">{{ sj_post.title }}</a></h3>
+
+    </div>
+
     <h2>فعال ترین کاربرها</h2>
     {%  active_users 3 as act_usr %}
     {% for user in act_usr %}

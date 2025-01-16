@@ -5,6 +5,7 @@ from django.db.models import Count, Q
 from ..models import Post, Comment,User
 from markdown import markdown
 from django.utils.safestring import mark_safe
+from random import randint
 
 register = template.Library()
 
@@ -60,3 +61,10 @@ def is_image(obj):
 @register.simple_tag()
 def most_popular_author_posts(pk, count=5):
     return Post.published.filter(author_id=pk).annotate(comments_count=Count('comments', filter=Q(comments__active=True))).order_by('-comments_count')[:count]
+
+@register.simple_tag()
+def suggested_post():
+    count = Post.published.count()
+    random_pk = randint(0, count - 1)
+
+    return Post.published.all()[random_pk]
