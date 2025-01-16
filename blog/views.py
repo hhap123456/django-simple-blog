@@ -1,8 +1,11 @@
+from audioop import reverse
+
 from django.contrib.admin.templatetags.admin_list import results, change_list_object_tools_tag
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from django.template.context_processors import request
+from django.urls import reverse_lazy
 from django.utils.translation.template import context_re
 
 from .forms import TicketForm, CommentForm, SearchForm, CreatePostForm, \
@@ -14,6 +17,7 @@ from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, TrigramSimilarity
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 
 
@@ -354,3 +358,66 @@ def author_comment_dashboard(request, post_id):
         return Http404
 
 
+
+# ------registration views START
+class CustomLoginViews(auth_views.LoginView):
+    template_name = 'accounts/login.html'
+    redirect_authenticated_user = True
+
+    def get_success_url(self):
+        """Custom redirect after login"""
+        next_url = self.request.GET.get('next')
+        if next_url:
+            return next_url
+        return reverse_lazy('blog:index')
+
+    def get_redirect_url(self):
+        """Override to handle the next parameter safely"""
+        redirect_to = self.request.POST.get(
+            self.redirect_field_name,
+            self.request.GET.get(self.redirect_field_name)
+        )
+        if redirect_to:
+            return redirect_to
+        return self.success_url
+
+
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    template_name = 'accounts/password_reset.html'
+    email_template_name = 'accounts/password_reset_email.html'
+    subject_template_name = 'accounts/password_reset_subject.txt'
+    success_url = reverse_lazy('blog:index')
+
+
+class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = 'accounts/password_reset_done.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Password Reset Sent'  # Add any custom context
+        return context
+
+class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = 'accounts/password_reset_confirm.html'  # Custom template
+    success_url = reverse_lazy('blog:login')  # Redirect after successful password reset
+
+    def form_valid(self, form):
+        # Add custom logic before saving the new password
+        response = super().form_valid(form)
+        # Example: Logging or sending a custom notification
+        return response
+
+class CustomPasswordChangeView(auth_views.PasswordChangeView):
+    template_name = 'accounts/password_change.html'
+    success_url = reverse_lazy('blog:password_change_done')
+
+    def form_valid(self, form):
+        # Add custom logic before saving
+        response = super().form_valid(form)
+        # Add custom logic after saving
+        return response
+
+class CustomPasswordChangeDoneView(auth_views.PasswordChangeDoneView):
+    template_name = 'accounts/password_change_done.html'
+
+# ------registration views END
