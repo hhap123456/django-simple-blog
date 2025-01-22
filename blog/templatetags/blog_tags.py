@@ -48,7 +48,8 @@ def least_reading_time():
 
 @register.simple_tag()
 def active_users(count=5):
-    return User.objects.annotate(post_count=Count('user_posts')).order_by('-post_count')[:count]
+    return User.objects.annotate(post_count=Count('user_post'),
+                                 filter=Q(comments__active=True)).order_by('-post_count')[:count]
 
 @register.filter
 def is_post(obj):
@@ -60,7 +61,8 @@ def is_image(obj):
 
 @register.simple_tag()
 def most_popular_author_posts(pk, count=5):
-    return Post.published.filter(author_id=pk).annotate(comments_count=Count('comments', filter=Q(comments__active=True))).order_by('-comments_count')[:count]
+    return Post.published.filter(author_id=pk).annotate(comments_count=Count('comments'),
+                                                        filter=Q(comments__active=True)).order_by('-comments_count')[:count]
 
 @register.simple_tag()
 def suggested_post():

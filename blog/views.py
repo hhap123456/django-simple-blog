@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from django.template.context_processors import request
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils.translation.template import context_re
 
 from .forms import TicketForm, CommentForm, SearchForm, CreatePostForm, \
@@ -19,7 +20,7 @@ from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 def index(request):
@@ -93,7 +94,10 @@ def ticket(request):
             # ticket_obj.subject = cd['subject']
             # ticket_obj.save()
 
-            return redirect('blog:profile')
+            if request.user.is_authenticated():
+                return redirect('blog:profile')
+            else:
+                return redirect('blog:index')
     else:
         form = TicketForm()
 
@@ -198,10 +202,13 @@ def post_search(request):
 #
 #     return render(request, 'blog/profile.html', {'posts': posts})
 
-class Profile(ListView):
+
+
+class Profile(LoginRequiredMixin, ListView):
     template_name = 'blog/profile.html'
     context_object_name = 'posts'
     paginate_by = 5
+    login_url = reverse_lazy('blog:login')
 
     def get_queryset(self):
         return Post.published.filter(author=self.request.user)
@@ -361,7 +368,7 @@ def author_comment_dashboard(request, post_id):
 
 # ------registration views START
 class CustomLoginViews(auth_views.LoginView):
-    template_name = 'accounts/login.html'
+    template_name = 'registration/login.html'
     redirect_authenticated_user = True
 
     def get_success_url(self):
@@ -383,14 +390,14 @@ class CustomLoginViews(auth_views.LoginView):
 
 
 class CustomPasswordResetView(auth_views.PasswordResetView):
-    template_name = 'accounts/password_reset.html'
-    email_template_name = 'accounts/password_reset_email.html'
-    subject_template_name = 'accounts/password_reset_subject.txt'
+    template_name = 'registration/password_reset.html'
+    email_template_name = 'registration/password_reset_email.html'
+    subject_template_name = 'registration/password_reset_subject.txt'
     success_url = reverse_lazy('blog:index')
 
 
 class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
-    template_name = 'accounts/password_reset_done.html'
+    template_name = 'registration/password_reset_done.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -398,7 +405,7 @@ class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
         return context
 
 class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
-    template_name = 'accounts/password_reset_confirm.html'  # Custom template
+    template_name = 'registration/password_reset_confirm.html'  # Custom template
     success_url = reverse_lazy('blog:login')  # Redirect after successful password reset
 
     def form_valid(self, form):
@@ -408,7 +415,7 @@ class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
         return response
 
 class CustomPasswordChangeView(auth_views.PasswordChangeView):
-    template_name = 'accounts/password_change.html'
+    template_name = 'registration/password_change.html'
     success_url = reverse_lazy('blog:password_change_done')
 
     def form_valid(self, form):
@@ -418,6 +425,6 @@ class CustomPasswordChangeView(auth_views.PasswordChangeView):
         return response
 
 class CustomPasswordChangeDoneView(auth_views.PasswordChangeDoneView):
-    template_name = 'accounts/password_change_done.html'
+    template_name = 'registration/password_change_done.html'
 
 # ------registration views END
